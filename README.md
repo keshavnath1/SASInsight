@@ -10,6 +10,14 @@ Intake → Understand SAS → Draft requirements → Compare designs → Review 
 
 This is an upstream planning repo, not a SAS parser, migration engine or benchmark platform. The assistant does the analysis; a small helper checks file hashes. SASInsight does not execute SAS or generate production migration code.
 
+## Why we are doing this
+
+We do not want to translate SAS line by line and carry the same legacy execution structure into Python. We first want to recover the workload's behavior, draft understandable requirements, and propose better execution designs while preserving the required business rules.
+
+**SASInsight answers: what does this workload do, what could we redesign, and what evidence would prove the new implementation correct and efficient?** Source-derived requirements and optimization proposals remain drafts for human review; correctness needs downstream SAS tie-out, and efficiency needs representative benchmarks.
+
+The design is intentionally simple: **agents do the work, skills guide the reasoning, scripts handle exact mechanics, and humans approve decisions.** The one existing script checks input hashes; it is not a hidden analysis engine or workflow controller. Read [the design rationale](docs/DESIGN.md) for the business problem, component responsibilities and the boundary with migration.
+
 ## Start here
 
 1. Clone this repo and open the **repository root** in Codex or VS Code Copilot Agent Mode.
@@ -62,7 +70,7 @@ AGENTS.md                    For the assistant: scope, roles and stops
 .github/prompts/             Thin starting prompt
 intake/                      Your private inputs; ignored by Git
 output/                      Your private generated drafts; ignored by Git
-docs/                        Short walkthrough and provenance
+docs/                        Design rationale, walkthrough and validation limits
 examples/                    Small, explicitly synthetic SAS text examples
 scripts/input_snapshot.py    Optional standard-library input hash helper
 tests/                       Focused helper checks, not a migration engine
