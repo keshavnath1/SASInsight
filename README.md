@@ -40,6 +40,24 @@ Routine drafting proceeds without approval at every stage. The assistant must st
 
 **orchestrate** connects these five skills. It does not require a CLI, database or state-machine service. A short `PROGRESS.md` lets an interrupted chat resume.
 
+## Jim Thompson practices in SASInsight
+
+We adapt selected practices from Jim Thompson's [planning](https://github.com/jimthompson5802/coding-assistant-practices/blob/abdf5661855dae25e002578fe25c961a6200db5d/coding-assistant-planning-practices.md), [feedback-loop](https://github.com/jimthompson5802/coding-assistant-practices/blob/abdf5661855dae25e002578fe25c961a6200db5d/open-vs-closed-loop-practices.md) and [subagent](https://github.com/jimthompson5802/coding-assistant-practices/blob/abdf5661855dae25e002578fe25c961a6200db5d/subagent-practices.md) guidance, pinned to the referenced commit. These are our adaptations, not quotations, full compliance or Jim's endorsement.
+
+**1. Understand the codebase before planning.** [AGENTS.md](AGENTS.md#purpose-and-read-order) sets the read order; [understand](.agents/skills/understand/SKILL.md) creates source-linked facts and unknowns before [specify](.agents/skills/specify/SKILL.md) and [design](.agents/skills/design/SKILL.md) propose requirements and architectures.
+
+**2. Keep work focused and proportional.** [orchestrate](.agents/skills/orchestrate/SKILL.md) coordinates five small drafting responsibilities. [The design rationale](docs/DESIGN.md#what-we-deliberately-left-out) explains why we avoid a parser/runtime framework and load specialist instructions only when needed.
+
+**3. Separate authoring, review and integration.** [The roles](AGENTS.md#roles-not-a-fleet-of-services) separate the author from a fresh reviewer where supported. [review](.agents/skills/review/SKILL.md) reads original evidence and writes findings only; the author owns corrections and orchestrate coordinates the handoff. Separate profiles alone do not prove separate execution.
+
+**4. Use feedback, bound correction and preserve checks.** [The correction rule](AGENTS.md#simple-records) permits one draft revision plus fresh re-review, then PARTIAL/BLOCKED if unresolved. [input_snapshot.py](scripts/input_snapshot.py) checks bytes rather than guessing hashes; [its tests](tests/test_input_snapshot.py) check this narrow mechanical behavior. Neither establishes SAS semantics. Review must not alter facts or weaken acceptance criteria to claim success.
+
+**5. Persist progress outside chat.** Each private run appends stage/role/findings/next-action entries to its PROGRESS.md. [The public progress record](PROGRESS.md) separates observed rehearsal results from unrun demonstrations; [the walkthrough](docs/WALKTHROUGH.md#author-reviewer-and-one-correction-cycle) explains the handoffs. Git versions the reusable method, not private intake or outputs.
+
+**6. Retain human ownership.** [Output authority](AGENTS.md#output-and-authority) keeps requirements and ADRs DRAFT. Unlike Jim's implementation-phase gates, our routine drafting stages continue automatically; human review and downstream implementation approval remain separate. Document review cannot select the runtime or approve migration.
+
+**What is actually shown:** [validation](docs/VALIDATION.md#author-reviewer-separation-and-correction-status) records a fresh-context Manus draft review and focused helper checks. A deliberately false ADR rejection and a completed repair/re-review cycle are **NOT_RUN**, not demonstrated passes. Live Codex/Copilot, model/provider comparisons, token/cache savings, SAS parity and runtime benchmarks remain untested or unmeasured.
+
 ## What your team will read
 
 Each run writes a fresh folder, `output/<run-id>/`:

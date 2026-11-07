@@ -36,6 +36,31 @@ To rehearse only this example without analyzing the counterexample too, copy tha
 
 Both files are source-only examples. They include no real customer data, SAS LOG/LST, generated predictions or runtime results. A source-only package can be useful and reviewable while behavioral tie-out and benchmarks remain NOT_RUN.
 
+## Author, reviewer and one correction cycle
+
+The author writes the factual record and draft PRD/ADRs. A fresh reviewer reads original intake and those drafts, then writes REVIEW.md only. The reviewer does not repair the author's work or rewrite expected behavior. Orchestrate reconciles the findings and routes any draft correction back to the author.
+
+```text
+Author draft → fresh review → author correction 1 → fresh re-review
+                                                    ↓
+                             Resolved: package for human review
+                             Unresolved: PARTIAL/BLOCKED and stop
+```
+
+If no material correction is needed, go from review to packaging without inventing a repair. If a factual error or changed source is discovered, preserve the run and start a fresh linked run. Do not rewrite source evidence to rescue a failed ADR. If fresh review is unavailable, record the limitation rather than claiming independence. These are workflow instructions, not a new enforcement engine.
+
+### Illustrative false ADR, not an executed result
+
+For `examples/dependent.sas.txt`, a draft that says “scenario_a and scenario_b can start independently from the raw input” conflicts with line 8: `set work.scenario_a;`. The correct finding would cite that producer-consumer dependency. An author could revise the design to keep the dependency and obtain a fresh re-review; resolving this contradiction would still not prove runtime speedup or parity.
+
+This is an **illustration** of the intended challenge, not an observed ADR rejection. The existing rehearsal used correct conditional designs, received a fresh Manus document review, and needed no material draft correction. False-ADR rejection and completed correction/re-review remain **NOT_RUN**. See [public progress](../PROGRESS.md) and [actual validation](VALIDATION.md#author-reviewer-separation-and-correction-status).
+
+### What a private run records
+
+Append to `output/<run-id>/PROGRESS.md` after each handoff: the role and actual context, skill, input/output paths, finding reference, stage status, correction count and next action. For example, an actual correction entry should cite the initial REVIEW finding and revised ADR; a re-review entry should name the new context and record its real outcome. Do not prefill results. Keep earlier entries and all unresolved findings.
+
+The published root [PROGRESS.md](../PROGRESS.md) is only a sanitized project summary. It does not replace a run's detailed evidence or authorize another run. [Jim's practices](../README.md#jim-thompson-practices-in-sasinsight) explain why these responsibilities are separate.
+
 ## If the chat stops
 
 Name the exact run and ask:
