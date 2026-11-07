@@ -1,0 +1,30 @@
+# Private inputs and generated drafts
+/intake/**
+!/intake/.gitkeep
+/output/**
+!/output/.gitkeep
+
+# Credentials, environments and local caches
+.env
+.env.*
+*.pem
+*.key
+*.p12
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.DS_Store
+Thumbs.db
+
+# Business SAS/log/data files outside the intended private directories
+*.sas
+*.log
+*.lst
+*.csv
+*.parquet
+*.sas7bdat
+*.sas7bcat
+
+# Explicitly synthetic examples are text documents, not private datasets.

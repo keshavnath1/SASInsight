@@ -1,0 +1,16 @@
+/* Synthetic source-only example. No real data or observed SAS execution. */
+data work.prepared;
+  set source.loans;
+  if missing(loan_id) then delete;
+  keep loan_id status balance;
+run;
+
+data work.current;
+  set work.prepared;
+  if status = 'CURRENT';
+run;
+
+data work.past_due;
+  set work.prepared;
+  if status = 'PAST_DUE';
+run;

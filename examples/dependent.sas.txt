@@ -1,0 +1,10 @@
+/* Synthetic source-only counterexample. No execution or business dataset. */
+data work.scenario_a;
+  set source.loans;
+  adjusted_balance = balance * 0.95;
+run;
+
+data work.scenario_b;
+  set work.scenario_a;
+  if adjusted_balance > 1000;
+run;
