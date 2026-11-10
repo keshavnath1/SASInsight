@@ -20,8 +20,17 @@ your project uses different SAS constructs.
 
 ## Replay the teaching example
 
-Use Python 3.12 on macOS or Linux. From the walkthrough folder, install the
-local engine in a fresh environment, then run the public fixture:
+Start with the public [INTAKE files](../tests/fixtures/running-balance-workload/source/).
+Python reconstructs the source, then the candidate uses that evidence and
+the same inputs to produce `candidate.json`. In the review, open the
+[example tie-out](06-profile-and-tie-out.md#tie-out-draft) and check that the
+enrichment result contains both copies of `[1, 2, 3]`.
+
+<details>
+<summary>Engineering replay commands</summary>
+
+Use Python 3.12 on macOS or Linux. Run these commands from the walkthrough
+folder. Each run creates a fresh INTAKE copy and output directory.
 
 ~~~sh
 python3.12 -m venv .venv
@@ -33,19 +42,17 @@ scratch=$(cd "$scratch" && pwd -P)
 mkdir "$scratch/INTAKE"
 cp tests/fixtures/running-balance-workload/source/* "$scratch/INTAKE/"
 evidence="/tmp/sas-re-int1-${scratch##*/}"
-python3.12 -IB scripts/review_intake.py --intake "$scratch/INTAKE" --inventory
 python3.12 -IB scripts/review_intake.py --p2a --modernization-drafts --intake "$scratch/INTAKE" --destination "$evidence"
 evidence=$(cd "$evidence" && pwd -P)
-python3.12 -IB scripts/run_running_balance.py --package "$evidence" --intake "$scratch/INTAKE"
+python3.12 -IB scripts/run_running_balance.py --package "$evidence" --intake "$scratch/INTAKE" > "$scratch/candidate.json"
+PYTHONPATH=tests python3.12 -B -m unittest discover -s tests/workflow -p test_running_balance.py
 ~~~
 
-Use fresh paths on each replay. The
-[engine folder](../src/sas_re/README.md) explains the code with Mermaid.
-The runnable example also uses the review script, public fixture, typed
-profile, and candidate runner. The candidate only accepts the exact
-supported public workload. Other projects need a separate scope review. The copied public evidence
-package retains its original bytes, including historical navigation text
-inside its manifest-bound reports. Use these seven chapters for navigation.
+</details>
+
+The candidate accepts the exact public workload. For a different INTAKE,
+start with scope and coverage review. The
+[engine guide](../src/sas_re/README.md) shows how the Python pieces fit together.
 
 **Final team exercise:** Like an REA investigation, start from a concrete
 question and ask what evidence would answer it. In this SAS workflow,

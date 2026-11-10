@@ -7,8 +7,8 @@ Agent Mastery separates the migration profile from the tie-out contract.
 Its tie-out identifies the comparison population, expected result source,
 producer, comparisons, and output. The examples below apply that structure
 to running balance and enrichment. They are design drafts for the team.
-Run the shell commands on this page. The candidate reads the evidence
-package and INTAKE directory through its CLI.
+The candidate uses the original INTAKE files and the evidence generated
+from them.
 
 ## Migration profile draft
 
@@ -36,8 +36,8 @@ inputs:
 candidate:
   runtime: Python 3.12
   script: scripts/run_running_balance.py
-  arguments: [--package, "$evidence", --intake, "$scratch/INTAKE"]
-  output: "$scratch/candidate.json"
+  reads: [original_intake, generated_evidence]
+  output: candidate.json
 outputs:
   work.running:
     columns: [group, subkey, amount, balance, previous, marker]
@@ -68,7 +68,7 @@ values come from the [public engineering test](../tests/workflow/test_running_ba
 module_id: running_balance
 status: DRAFT
 population: full_public_fixture
-actual: "$scratch/candidate.json"
+actual: candidate.json
 expected_source: tests/workflow/test_running_balance.py
 comparisons:
   work.running:
@@ -97,22 +97,16 @@ duplicate. The existing test checks the exact emitted lists for this
 fixture. The proposed multiset comparison expresses the design requirement
 for enrichment separately from that stricter fixture check.
 
-## Run the example
+## What the operator does
 
-From the walkthrough folder, use the Python 3.12 environment in
-[chapter 7](07-apply-to-your-intake.md#replay-the-teaching-example).
+| Step | Give it | Get back |
+| --- | --- | --- |
+| Reconstruct | Three SAS files, declared scope, and typed synthetic inputs | Source-linked evidence and both YAML drafts |
+| Run the Python candidate | The evidence package and the same INTAKE files | `candidate.json` with running balances, the sorted output, and enrichment |
+| Check the result | Candidate rows and the public engineering expectations | A comparison of order, values, and repeated rows |
 
-~~~sh
-scratch=$(mktemp -d /tmp/sas-rea-example-XXXXXX)
-scratch=$(cd "$scratch" && pwd -P)
-mkdir "$scratch/INTAKE"
-cp tests/fixtures/running-balance-workload/source/* "$scratch/INTAKE/"
-evidence="/tmp/sas-re-int1-${scratch##*/}"
-python3.12 -IB scripts/review_intake.py --p2a --modernization-drafts --intake "$scratch/INTAKE" --destination "$evidence"
-evidence=$(cd "$evidence" && pwd -P)
-python3.12 -IB scripts/run_running_balance.py --package "$evidence" --intake "$scratch/INTAKE" > "$scratch/candidate.json"
-PYTHONPATH=tests python3.12 -B -m unittest discover -s tests/workflow -p test_running_balance.py
-~~~
+The [engineering replay](07-apply-to-your-intake.md#replay-the-teaching-example)
+has the exact commands in an expandable section.
 
 The evidence directory contains the separate generated
 [migration profile](../tests/fixtures/running-balance-workload/evidence/migration-profile.yaml)
