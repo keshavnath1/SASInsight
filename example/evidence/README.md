@@ -19,5 +19,5 @@ For the audience-facing YAML examples, see the [migration profile and tie-out](.
 
 The [generated files](generated/) are the original reference artifacts.
 Start with [EVIDENCE.json](generated/EVIDENCE.json) to inspect the pointers
-above. The inventory and manifest hold file identities, while the generated
-review and YAML capture the tool's draft handoff.
+above. The inventory and manifest hold file identities. The generated YAML
+files record the draft configuration and its evidence bindings.
