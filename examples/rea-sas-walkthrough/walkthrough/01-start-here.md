@@ -34,10 +34,24 @@ is a comparison for the audience. The SAS example does not call REA.
 | What anchors an answer? | Findings and limitations returned by the inspection tools. | Original source spans, declared dataset access, inferred edges, and coverage in the generated evidence. |
 | What does the assistant do? | Explains findings and can drive further investigation. | The skills interpret the supplied evidence and propose a modernization design for human review. |
 
-The SQL declares `WORK.RUNNING` as an input. SORT reads that same dataset
-and writes `WORK.EXPORT_ORDER`. The source declares no dependency from
-SORT to enrichment. In REA terms, the input declarations are the findings
-that support this conclusion. Runtime scheduling remains unverified.
+## Why use deterministic evidence if the LLM already knows SAS?
+
+**We make the evidence deterministic so the LLM’s interpretation can be
+checked.** An LLM can read SAS and explain it. For supported syntax, Python
+produces the same evidence from the same source bytes, scope, input profile,
+and engine version. It records what each operation reads and writes and
+where those declarations appear in the source. The LLM uses those records
+to explain the workflow, draw diagrams, and propose changes. Its wording and
+recommendations can vary, and a reviewer can check them against the same facts.
+
+The program lists SORT before SQL, so a diagram based on statement order
+alone could show `SORT → enrichment`. But [the SAS source](02-sas-to-evidence.md#the-sas-program)
+shows that both operations read `WORK.RUNNING`. SORT writes
+`WORK.EXPORT_ORDER`, which the enrichment query never reads. In REA terms,
+those input and output declarations are the findings a reviewer can use to
+check the diagram. They support keeping enrichment off the sorted-output
+path. Whether the two operations can safely run in parallel remains a
+separate question.
 
 ## Reading path
 
