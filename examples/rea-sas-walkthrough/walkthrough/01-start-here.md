@@ -34,9 +34,10 @@ is a comparison for the audience. The SAS example does not call REA.
 | What anchors an answer? | Findings and limitations returned by the inspection tools. | Original source spans, declared dataset access, inferred edges, and coverage in the generated evidence. |
 | What does the assistant do? | Explains findings and can drive further investigation. | The skills interpret the supplied evidence and propose a modernization design for human review. |
 
-If a teammate asks whether enrichment must wait, the REA analogy is to ask
-which tool finding supports that relationship. Here we can point directly
-to the SQL input declaration and trace its inferred producer.
+The SQL declares `WORK.RUNNING` as an input. SORT reads that same dataset
+and writes `WORK.EXPORT_ORDER`. The source declares no dependency from
+SORT to enrichment. In REA terms, the input declarations are the findings
+that support this conclusion. Runtime scheduling remains unverified.
 
 ## Reading path
 
