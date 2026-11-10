@@ -7,17 +7,48 @@ drafts. Both bind the exact source identities and evidence manifest. The
 typed [input profile](../tests/fixtures/running-balance-workload/source/profile.json)
 is a different file. It supplies synthetic assumptions for reconstruction.
 
-| Actual draft field | Current value | How to use it in review |
-| --- | --- | --- |
-| Migration profile `target.runtime` and `target.distributed` | `PENDING` | Discuss the native baseline and the evidence that would justify distribution. |
-| Migration profile `execution.ordering_policy` and `execution.multiplicity_policy` | `PENDING` | Review SORT ties and SQL duplicate handling. |
-| Migration profile `approval.architecture` and `approval.business_intent` | `REQUIRED` | A person decides and records approval separately where applicable. |
-| Tie-out `checks.source_coverage` | `REVIEW_REQUIRED` | Inspect supported and unresolved scope. |
-| Tie-out ordering, population, and numeric tolerance checks | `PENDING` | Specify expected outputs, comparisons, and tolerances. |
-| Tie-out `reference.sas_execution` | `NOT_RUN` | Independent verification remains `UNVERIFIABLE`; semantic acceptance is `BLOCKED`. |
+The excerpts below show the actual generated fields in YAML block style.
+The linked files contain the full `binding` block with the source and
+evidence hashes.
 
-Copilot can propose values or questions for review. These checked-in YAML
-drafts retain their pending fields.
+## Migration profile draft
+
+The profile records the decisions the team needs to make about how the
+candidate should run. For this example, the review should address equal-key
+SORT ties and whether repeated enrichment rows must be preserved.
+
+~~~yaml
+status: DRAFT
+target:
+  runtime: PENDING
+  distributed: PENDING
+execution:
+  ordering_policy: PENDING
+  multiplicity_policy: PENDING
+  category_policy: PENDING
+approval:
+  architecture: REQUIRED
+  business_intent: REQUIRED
+~~~
+
+## Tie-out draft
+
+The tie-out records what the team needs to verify. For this example,
+review SORT order separately from enrichment multiplicity. The reference
+section records the status of independent SAS verification.
+
+~~~yaml
+status: DRAFT
+checks:
+  source_coverage: REVIEW_REQUIRED
+  ordering_and_output: PENDING
+  population_and_multiplicity: PENDING
+  numeric_tolerance: PENDING
+reference:
+  sas_execution: NOT_RUN
+  semantic_verification: UNVERIFIABLE
+  semantic_acceptance: BLOCKED
+~~~
 
 ## One concrete engineering check
 
