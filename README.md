@@ -17,6 +17,6 @@ investigate and where deterministic evidence makes its conclusions checkable.
 | 7 | [Apply the approach to a different INTAKE](walkthrough/07-apply-to-your-intake.md) |
 
 This standalone branch is for design discussion. The [public example](example/)
-contains the SAS source and generated evidence. The [Python reference](src/sas_re/README.md)
+contains the SAS source and a [plain-language evidence guide](example/evidence/README.md). The [Python reference](src/sas_re/README.md)
 shows what deterministic reconstruction does today and where the team could
 extend it for a different workload.

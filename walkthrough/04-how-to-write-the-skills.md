@@ -1,8 +1,8 @@
 # Write skills that work from evidence
 
 A skill gives Copilot a repeatable review job. The operator starts the
-session and supplies the [generated handoff](../example/evidence/MODERNIZATION_REVIEW.md),
-the selected graph and inventory, and the YAML drafts. A skill-file read
+session and supplies the [source evidence](../example/evidence/README.md) and
+the relevant YAML drafts. A skill-file read
 only shows that the instructions were opened. Review the produced draft to
 see whether the instructions were applied.
 

@@ -94,12 +94,13 @@ where b.weight > 0;
 | [main.sas.txt](../example/source/main.sas.txt), lines 12–14, bytes [278,350) | Operation 3 reads `WORK.RUNNING`, writes `WORK.EXPORT_ORDER`, and sorts by `group, subkey`. |
 | [enrich.sas.txt](../example/source/enrich.sas.txt), lines 1–6, bytes [0,202) | Operation 5 reads `WORK.RUNNING` and `WORK.LOOKUP`, left joins on group, applies the weight filter, and writes `WORK.ENRICHED`. |
 
-Open the [actual graph](../example/evidence/EVIDENCE.json).
+Start with the [plain-language evidence guide](../example/evidence/README.md).
+Open the [actual graph](../example/evidence/generated/EVIDENCE.json).
 Compare `/operations/3` and `/operations/5` with `/edges/2` and `/edges/3`.
 The operations carry source declarations. Both edges are `INFERENCE` records
 from operation 2, the DATA step. The public package contains six operations
-and four inferred edges. See the [bound inventory](../example/evidence/INVENTORY.json)
-and [evidence manifest](../example/evidence/MANIFEST.json)
+and four inferred edges. See the [bound inventory](../example/evidence/generated/INVENTORY.json)
+and [evidence manifest](../example/evidence/generated/MANIFEST.json)
 for the identities.
 
 **Deterministic** means the same verified bytes, profile, and engine version

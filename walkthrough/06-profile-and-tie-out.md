@@ -105,8 +105,8 @@ for enrichment separately from that stricter fixture check.
 | Check the result | Candidate rows and the public engineering expectations | A comparison of order, values, and repeated rows |
 
 The evidence directory contains the separate generated
-[migration profile](../example/evidence/migration-profile.yaml)
-and [tie-out draft](../example/evidence/tie-out.yaml)
+[migration profile](../example/evidence/generated/migration-profile.yaml)
+and [tie-out draft](../example/evidence/generated/tie-out.yaml)
 with their source and evidence bindings. Read the design examples above to
 understand the workload. Use the generated files to trace the review back
 to the exact inputs.

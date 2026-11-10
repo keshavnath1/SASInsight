@@ -1,10 +1,9 @@
 # Two graphs, two different jobs
 
-Give Copilot the [evidence graph](../example/evidence/EVIDENCE.json)
-and [review handoff](../example/evidence/MODERNIZATION_REVIEW.md).
-Ask it to draw the current dependencies before proposing any changes.
-These diagrams show example skill deliverables. Python generates the
-evidence records, and the skill can render a view of them in Mermaid.
+Start with the [evidence guide](../example/evidence/README.md) for the
+source declarations behind these diagrams. Python generates the evidence
+records. A skill can turn those records into a Mermaid view before it
+proposes changes.
 
 ## As-is view
 

@@ -1,9 +1,8 @@
 # From dependency findings to a PRD and three ADRs
 
 The following drafts illustrate what the team can ask the skills to produce
-from the [actual evidence](../example/evidence/EVIDENCE.json).
-The [public authored review](../example/evidence/MODERNIZATION_REVIEW.md)
-is the longer companion example. Business approval remains pending.
+from the [actual evidence](../example/evidence/generated/EVIDENCE.json).
+Business approval remains pending.
 
 ## Mini-PRD
 
