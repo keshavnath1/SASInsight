@@ -8,7 +8,7 @@ investigate and where deterministic evidence makes its conclusions checkable.
 
 | Chapter | Topic |
 | --- | --- |
-| 1 | [Business problem and REA comparison](walkthrough/01-start-here.md) |
+| 1 | [Business explanation, technical detail, and REA comparison](walkthrough/01-start-here.md) |
 | 2 | [Complete SAS program and Python evidence](walkthrough/02-sas-to-evidence.md) |
 | 3 | [As-is dependencies and proposed optimization](walkthrough/03-evidence-to-graphs.md) |
 | 4 | [How your team can write its own skills](walkthrough/04-how-to-write-the-skills.md) |

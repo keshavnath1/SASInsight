@@ -1,67 +1,100 @@
-# From SAS code to an execution plan
+# From SAS code to a modernization design
 
-A loan team needs two outputs from the same prepared rows: an ordered
-running-balance export and an enriched view with lookup weights. The
-[public synthetic example](../example/source/main.sas.txt)
-models that shape with small numeric rows. It contains no loan records.
+We want to modernize a job that calculates running balances and enriches
+those balances with lookup weights. The team needs to preserve the
+calculations and required ordering while choosing a maintainable design.
+The [public SAS example](02-sas-to-evidence.md#the-sas-program) uses small
+synthetic transaction groups to explain that business problem.
 
-**Opening question:** Does SQL enrichment need to wait for SORT?
+## Start with the business question
 
-Read the [complete three-file SAS program](02-sas-to-evidence.md#the-sas-program)
-before looking at the graph. The loan scenario is a business analogy. The
-working example uses synthetic transaction groups and lookup weights.
+**Does enrichment need to wait for SORT?**
+
+The job prepares running balances. SORT produces an ordered copy for one
+consumer. SQL joins the prepared balances to a lookup table for another.
+The source tells us which dataset each operation reads.
 
 ~~~mermaid
 flowchart LR
-    A["Authorized SAS and input profile"] --> B["Python reconstructs supported operations"]
-    B --> C["Evidence and unresolved findings"]
-    C --> D["Human starts Copilot with the evidence"]
-    D --> E["Skills draft requirements, graphs and design choices"]
-    E --> F["People review decisions and validation obligations"]
+    A["Prepared running balances"] --> B["SORT by group and subkey"]
+    B --> C["Ordered output"]
+    A --> D["Join lookup and filter weights"]
+    D --> E["Enriched output"]
 ~~~
 
-## Explain it by comparison with REA
+SORT appears before SQL in the program. However, SQL reads `WORK.RUNNING`
+directly and never reads SORT's output, `WORK.EXPORT_ORDER`. This supports
+keeping enrichment off the sorted-output path in the proposed design.
+Actual scheduling and safe parallel execution still need separate evidence.
 
-Reverse Engineer Anything (REA, by morluto) documents an agent-led
-investigation. An agent calls inspection tools through MCP, receives
-evidence, and can ask follow-up questions. Here, the operator first runs a
-scoped Python reconstruction, then provides its evidence to Copilot. REA
-is a comparison for the audience. The SAS example does not call REA.
+## Explain the approach in everyday terms
 
-| Audience question | REA-style investigation | This SAS example |
+Python reads supported SAS statements and records what each step consumes
+and produces. Copilot uses those findings to explain the workflow and
+propose a design. People can check the proposal against the original code.
+
+**We make the evidence repeatable so the team can check Copilot's explanation
+and design decisions against the SAS source.**
+
+An LLM already understands SAS syntax. Supplying evidence gives the team
+specific findings to review when an explanation or diagram is disputed.
+Here, the input and output declarations let a reviewer check whether a
+proposed `SORT → enrichment` dependency belongs in the design.
+
+## Show engineers how the finding is established
+
+The parser recognizes statements and records source locations. The graph
+builder uses those facts and the supplied input profile to describe
+relationships and constraints.
+
+| SAS declaration | What Python records | Design implication |
 | --- | --- | --- |
-| Who starts the inspection? | The agent chooses tool calls based on the question. | The operator selects the inputs and runs Python. |
-| What anchors an answer? | Findings and limitations returned by the inspection tools. | Original source spans, declared dataset access, inferred edges, and coverage in the generated evidence. |
-| What does the assistant do? | Explains findings and can drive further investigation. | The skills interpret the supplied evidence and propose a modernization design for human review. |
+| `data work.running;` | The DATA step writes `WORK.RUNNING`. | This prepared dataset supplies both consumers. |
+| `proc sort data=work.running out=work.export_order;` | SORT reads the prepared dataset and writes an ordered copy. | Preserve the separate ordered output. |
+| `by group subkey;` in SORT | Ascending sort keys are `group, subkey`. | Review ties and preserve row multiplicity. |
+| `from work.running as a left join work.lookup as b` | Enrichment reads the prepared dataset and lookup table. | Feed enrichment from the prepared population. |
 
-## Why use deterministic evidence if the LLM already knows SAS?
+The two producer-to-consumer links are inferred from declared reads and
+writes. The [evidence guide](../example/evidence/README.md) points to the
+actual records. Unsupported syntax and unresolved prerequisites remain
+visible as gaps.
 
-**We make the evidence deterministic so the LLM’s interpretation can be
-checked.** An LLM can read SAS and explain it. For supported syntax, Python
-produces the same evidence from the same source bytes, scope, input profile,
-and engine version. It records what each operation reads and writes and
-where those declarations appear in the source. The LLM uses those records
-to explain the workflow, draw diagrams, and propose changes. Its wording and
-recommendations can vary, and a reviewer can check them against the same facts.
+## Explain the technical guarantees
 
-The program lists SORT before SQL, so a diagram based on statement order
-alone could show `SORT → enrichment`. But [the SAS source](02-sas-to-evidence.md#the-sas-program)
-shows that both operations read `WORK.RUNNING`. SORT writes
-`WORK.EXPORT_ORDER`, which the enrichment query never reads. In REA terms,
-those input and output declarations are the findings a reviewer can use to
-check the diagram. They support keeping enrichment off the sorted-output
-path. Whether the two operations can safely run in parallel remains a
-separate question.
+For supported syntax, the same source bytes, scope, input profile, and
+engine version produce repeatable evidence. Original byte spans and hashes
+let a reviewer locate a finding and detect a changed input. Input types and
+sample ordering supplied by the profile remain explicit assumptions.
 
-## Reading path
+The parser records `RETAIN` initialization, group resets, and the guarded
+`LAG` call separately. These details constrain the design because state and
+call order affect the calculation. Recognizing them does not establish the
+contents of an actual SAS runtime dataset. See [how Python turns SAS into
+evidence](02-sas-to-evidence.md) for the implementation path.
 
-1. [SAS to Python evidence](02-sas-to-evidence.md)
-2. [Evidence to as-is and proposed graphs](03-evidence-to-graphs.md)
-3. [Write the five skills](04-how-to-write-the-skills.md)
-4. [PRD, module design, and three ADRs](05-prd-and-architecture-decisions.md)
-5. [Migration profile and tie-out drafts](06-profile-and-tie-out.md)
-6. [Apply it to your INTAKE](07-apply-to-your-intake.md)
+## Compare the approach with REA
 
-**Takeaway:** Keep the evidence, the design interpretation, and the approval
-decision distinct. This example demonstrates bounded Python behavior on
-synthetic inputs. Independent SAS verification and benchmarking remain unrun.
+REA also uses analysis code behind its tools. An assistant can call those
+tools through MCP, receive structured findings and limitations, and choose
+what to inspect next. Our demonstrated SAS workflow generates a scoped
+Python evidence package before the skill-guided review.
+
+| Question | REA | This SAS example |
+| --- | --- | --- |
+| How is analysis requested? | The assistant calls inspection tools through MCP. | The operator selects the declared source scope and profile. |
+| What produces findings? | Parsers, analyzers, and runtime providers behind the tools. | Python parsing and graph construction for supported SAS forms. |
+| What does the assistant do? | Chooses further inspection and interprets findings. | Interprets the package and drafts requirements and design options. |
+| How can the team assess an answer? | Examine the returned evidence, scope, and limitations. | Follow the source spans, facts, inferred edges, and gaps. |
+
+For this example, both approaches would need evidence of the datasets read
+by SORT and enrichment to justify the dependency diagram. The interface
+used to request analysis does not itself establish the dependency.
+
+## Follow the example through the design
+
+1. [Read the full SAS program and trace it through Python](02-sas-to-evidence.md).
+2. [Compare the as-is graph with the proposed design](03-evidence-to-graphs.md).
+3. [Write skills with clear inputs, outputs, and checks](04-how-to-write-the-skills.md).
+4. [Review the PRD, module design, and three ADRs](05-prd-and-architecture-decisions.md).
+5. [Inspect the worked migration profile and tie-out](06-profile-and-tie-out.md).
+6. [Apply the approach to a different INTAKE](07-apply-to-your-intake.md).
